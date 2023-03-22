@@ -9,5 +9,5 @@ $startTime = (Get-Date).AddDays(-25)
 $endTime = Get-Date -Format yyyy-MM-dd
 
 # Retrieve the alerts for the custom time range
-Get-AzAlert -CustomTimeRange "$(Get-Date $startTime -Format yyyy-MM-dd)/$endTime"
+Get-AzAlert -CustomTimeRange "$(Get-Date $startTime -Format yyyy-MM-dd)/$endTime" | Sort-Object StartDateTime
 
