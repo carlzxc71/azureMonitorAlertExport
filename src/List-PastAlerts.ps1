@@ -1,6 +1,23 @@
+# Input bindings are passed in via param block.
+param($Timer)
+
+## Import Modules
+
+Import-Module Az
+Import-Module Az.Accounts
+Import-Module Az.AlertsManagement
+
 ## Set correct subscription
 
-Select-AzSubscription -Subscription "b55e1bab-2d62-42f4-8d58-feeb80f33f7e"
+$ProgressPreference="silentlyContinue"
+
+Disable-AzContextAutosave -Scope Process
+  
+# Connect to Azure with system-assigned managed identity
+$AzureContext = (Connect-AzAccount -Identity).context
+  
+# set and store context
+$AzureContext = Set-AzContext -SubscriptionName $AzureContext.Subscription -DefaultProfile $AzureContext 
 
 ## List past alerts
 
@@ -12,4 +29,4 @@ $endTime = Get-Date -Format yyyy-MM-dd
 $Alerts = Get-AzAlert -CustomTimeRange "$(Get-Date $startTime -Format yyyy-MM-dd)/$endTime" | Select-Object -Property Name,StartDateTime,TargetResource,MonitorCondition,MonitorConditionResolvedDateTime | 
 Sort-Object StartDateTime 
 
-$Alerts
+return $Alerts
