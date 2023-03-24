@@ -3,9 +3,9 @@ param($Timer)
 
 ## Import Modules
 
-Import-Module Az
-Import-Module Az.Accounts
-Import-Module Az.AlertsManagement
+Import-Module -Name Az -ErrorAction SilentlyContinue
+Import-Module -Name Az.Accounts -ErrorAction SilentlyContinue
+Import-Module -Name Az.AlertsManagement -ErrorAction SilentlyContinue
 
 ## Set correct subscription
 
