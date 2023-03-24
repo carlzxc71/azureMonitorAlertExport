@@ -66,3 +66,9 @@ resource "azurerm_windows_function_app" "func-monitoralerts" {
 
   tags = local.tags
 }
+
+resource "azurerm_role_assignment" "contributor" {
+  scope                = azurerm_resource_group.rg-monitor-automation.id
+  role_definition_name = "Contributor"
+  principal_id         = azurerm_windows_function_app.func-monitoralerts.identity[0].principal_id
+}
