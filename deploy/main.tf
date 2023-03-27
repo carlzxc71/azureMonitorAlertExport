@@ -74,7 +74,7 @@ resource "azurerm_automation_schedule" "schedule" {
 }
 
 resource "azurerm_automation_job_schedule" "jobschedule" {
-  schedule_name           = "Monthly"
+  schedule_name           = azurerm_automation_schedule.schedule.name
   resource_group_name     = azurerm_resource_group.rg-monitor-automation.name
   automation_account_name = azurerm_automation_account.aa-monitor-automation.name
   runbook_name            = azurerm_automation_runbook.aa-runbook.name
