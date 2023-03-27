@@ -60,7 +60,7 @@ resource "azurerm_automation_runbook" "aa-runbook" {
 }
 
 resource "azurerm_automation_schedule" "schedule" {
-  name                    = "tfex-automation-schedule"
+  name                    = "powershell-automation-schedule"
   resource_group_name     = azurerm_resource_group.rg-monitor-automation.name
   automation_account_name = azurerm_automation_account.aa-monitor-automation.name
   frequency               = "Month"
@@ -71,6 +71,13 @@ resource "azurerm_automation_schedule" "schedule" {
   }
 
   description = "Occurs once a month"
+}
+
+resource "azurerm_automation_job_schedule" "jobschedule" {
+  schedule_name           = "Monthly"
+  resource_group_name     = azurerm_resource_group.rg-monitor-automation.name
+  automation_account_name = azurerm_automation_account.aa-monitor-automation.name
+  runbook_name            = azurerm_automation_runbook.aa-runbook.name
 }
 
 resource "azurerm_role_assignment" "contributor" {
