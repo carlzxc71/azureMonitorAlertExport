@@ -1,6 +1,3 @@
-# Input bindings are passed in via param block.
-param($Timer)
-
 ## Import Modules
 
 Import-Module -Name Az 
