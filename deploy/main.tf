@@ -60,12 +60,17 @@ resource "azurerm_automation_runbook" "aa-runbook" {
 }
 
 resource "azurerm_automation_schedule" "schedule" {
-  name                    = "Schedule01"
-  automation_account_name = azurerm_automation_account.aa-monitor-automation.name
+  name                    = "tfex-automation-schedule"
   resource_group_name     = azurerm_resource_group.rg-monitor-automation.name
+  automation_account_name = azurerm_automation_account.aa-monitor-automation.name
   frequency               = "Month"
 
-  description = "Occurs every month"
+  monthly_occurrence {
+    day        = "Monday"
+    occurrence = 1
+  }
+
+  description = "Occurs once a month"
 }
 
 resource "azurerm_role_assignment" "contributor" {
