@@ -13,56 +13,48 @@ provider "azurerm" {
 
 locals {
   tags = {
-    "deployedBy" = "terraform"
+    "deployedBy"  = "terraform"
+    "environment" = "Development"
   }
 }
 
 resource "azurerm_resource_group" "rg-monitor-automation" {
-  name     = "rg-monitor-automation"
+  name     = "rg-monitor-automation-001"
   location = "West Europe"
 
   tags = local.tags
 }
 
-resource "azurerm_storage_account" "stg-monitorautomation" {
-  name                     = "stgmonitorautomation"
-  resource_group_name      = azurerm_resource_group.rg-monitor-automation.name
-  location                 = azurerm_resource_group.rg-monitor-automation.location
-  account_tier             = "Standard"
-  account_replication_type = "LRS"
-
-  tags = local.tags
-}
-
-resource "azurerm_service_plan" "plan-monitoralerts" {
-  name                = "plan-monitoralerts"
-  resource_group_name = azurerm_resource_group.rg-monitor-automation.name
+resource "azurerm_automation_account" "aa-monitor-automation" {
+  name                = "aa-monitorautomation-001"
   location            = azurerm_resource_group.rg-monitor-automation.location
-  os_type             = "Windows"
-  sku_name            = "Y1"
-
-  tags = local.tags
-}
-
-resource "azurerm_windows_function_app" "func-monitoralerts" {
-  name                = "func-monitoralerts"
   resource_group_name = azurerm_resource_group.rg-monitor-automation.name
-  location            = azurerm_resource_group.rg-monitor-automation.location
-
-  storage_account_name       = azurerm_storage_account.stg-monitorautomation.name
-  storage_account_access_key = azurerm_storage_account.stg-monitorautomation.primary_access_key
-  service_plan_id            = azurerm_service_plan.plan-monitoralerts.id
+  sku_name            = "Basic"
 
   identity {
     type = "SystemAssigned"
   }
 
 
-  site_config {
-    application_stack {
-      powershell_core_version = 7.2
-    }
-  }
+
+  tags = local.tags
+}
+
+data "local_file" "script" {
+  filename = "C:/Github/azureMonitorAlertExport/src/List-PastAlerts.ps1"
+}
+
+resource "azurerm_automation_runbook" "aa-runbook" {
+  name                    = "Get-AzureMonitorAlerts"
+  location                = azurerm_resource_group.rg-monitor-automation.location
+  resource_group_name     = azurerm_resource_group.rg-monitor-automation.name
+  automation_account_name = azurerm_automation_account.aa-monitor-automation.name
+  log_verbose             = "true"
+  log_progress            = "true"
+  description             = "Run this script to get past Azure Monitor Alerts"
+  runbook_type            = "PowerShell"
+
+  content = data.local_file.script.content
 
   tags = local.tags
 }
@@ -70,5 +62,5 @@ resource "azurerm_windows_function_app" "func-monitoralerts" {
 resource "azurerm_role_assignment" "contributor" {
   scope                = azurerm_resource_group.rg-monitor-automation.id
   role_definition_name = "Contributor"
-  principal_id         = azurerm_windows_function_app.func-monitoralerts.identity[0].principal_id
+  principal_id         = azurerm_automation_account.aa-monitor-automation.identity[0].principal_id
 }
