@@ -59,6 +59,15 @@ resource "azurerm_automation_runbook" "aa-runbook" {
   tags = local.tags
 }
 
+resource "azurerm_automation_schedule" "schedule" {
+  name                    = "Schedule01"
+  automation_account_name = azurerm_automation_account.aa-monitor-automation.name
+  resource_group_name     = azurerm_resource_group.rg-monitor-automation.name
+  frequency               = "Month"
+
+  description = "Occurs every month"
+}
+
 resource "azurerm_role_assignment" "contributor" {
   scope                = azurerm_resource_group.rg-monitor-automation.id
   role_definition_name = "Contributor"
