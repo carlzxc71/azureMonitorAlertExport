@@ -32,7 +32,7 @@ resource "azurerm_automation_account" "aa-monitor-automation" {
   sku_name            = "Basic"
 
   identity {
-    type = "SystemAssigned"
+    type = "SystemAssigned" # Creates a system-assigned identity
   }
 
 
