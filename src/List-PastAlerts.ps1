@@ -41,4 +41,4 @@ $ShareName = "share01"
 $DirectoryName = "directory01"
 $FileName = "alerts.csv"
 $FilePath = ".\alerts.csv"
-Set-AzStorageFileContent -ShareName $ShareName -Context $StorageContext -Source $FilePath -Path $DirectoryName/$FileName -Force
+Set-AzStorageFileContent -ShareName $ShareName -Context $StorageContext -Source $FilePath -Path "$DirectoryName/$FileName-$endTime" -Force
