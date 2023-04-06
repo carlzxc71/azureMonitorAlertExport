@@ -42,6 +42,8 @@ data "local_file" "script" {
   filename = "../src/List-PastAlerts.ps1"
 }
 
+## Automation account configuration
+
 resource "azurerm_automation_runbook" "aa-runbook" {
   name                    = "Get-AzureMonitorAlerts"
   location                = azurerm_resource_group.rg-monitor-automation.location
@@ -84,6 +86,8 @@ resource "azurerm_role_assignment" "contributor" {
   principal_id         = azurerm_automation_account.aa-monitor-automation.identity[0].principal_id
 }
 
+## Storage account configuration
+
 resource "azurerm_storage_account" "stg-monitor" {
   name                     = "stgazuremonitoralert001"
   resource_group_name      = azurerm_resource_group.rg-monitor-automation.name
@@ -92,4 +96,16 @@ resource "azurerm_storage_account" "stg-monitor" {
   account_replication_type = "LRS"
 
   tags = local.tags
+}
+
+resource "azurerm_storage_share" "stg-share" {
+  name                 = "share01"
+  storage_account_name = azurerm_storage_account.stg-monitor.name
+  quota                = 50
+}
+
+resource "azurerm_storage_share_directory" "stg-dir" {
+  name                 = "directory01"
+  share_name           = azurerm_storage_share.stg-share.name
+  storage_account_name = azurerm_storage_account.stg-monitor.name
 }
