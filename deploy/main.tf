@@ -35,13 +35,11 @@ resource "azurerm_automation_account" "aa-monitor-automation" {
     type = "SystemAssigned" # Creates a system-assigned identity
   }
 
-
-
   tags = local.tags
 }
 
 data "local_file" "script" {
-  filename = "C:/Github/azureMonitorAlertExport/src/List-PastAlerts.ps1"
+  filename = "../src/List-PastAlerts.ps1"
 }
 
 resource "azurerm_automation_runbook" "aa-runbook" {
@@ -84,4 +82,14 @@ resource "azurerm_role_assignment" "contributor" {
   scope                = azurerm_resource_group.rg-monitor-automation.id
   role_definition_name = "Contributor"
   principal_id         = azurerm_automation_account.aa-monitor-automation.identity[0].principal_id
+}
+
+resource "azurerm_storage_account" "stg-monitor" {
+  name                     = "stgazuremonitoralert001"
+  resource_group_name      = azurerm_resource_group.rg-monitor-automation.name
+  location                 = azurerm_resource_group.rg-monitor-automation.location
+  account_tier             = "Standard"
+  account_replication_type = "LRS"
+
+  tags = local.tags
 }
