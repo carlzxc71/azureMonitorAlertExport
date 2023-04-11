@@ -2,7 +2,7 @@ terraform {
   required_providers {
     azurerm = {
       source  = "hashicorp/azurerm"
-      version = "3.48.0"
+      version = "~> 3.48.0"
     }
   }
 }
@@ -15,6 +15,7 @@ locals {
   tags = {
     "deployedBy"  = "terraform"
     "environment" = "Development"
+    "workload"    = "alertExport"
   }
 }
 
@@ -40,6 +41,9 @@ resource "azurerm_automation_account" "aa-monitor-automation" {
 
 data "local_file" "script" {
   filename = "../src/List-PastAlerts.ps1"
+}
+
+data "azurerm_subscription" "primary" {
 }
 
 ## Automation account configuration
@@ -80,9 +84,24 @@ resource "azurerm_automation_job_schedule" "jobschedule" {
   runbook_name            = azurerm_automation_runbook.aa-runbook.name
 }
 
+resource "azurerm_automation_variable_string" "secret-variable" {
+  name                    = "accountKey"
+  resource_group_name     = azurerm_resource_group.rg-monitor-automation.name
+  automation_account_name = azurerm_automation_account.aa-monitor-automation.name
+  value                   = azurerm_storage_account.stg-monitor.primary_access_key
+  encrypted               = true
+  description             = "Account key for access to Azure Storage Account"
+}
+
 resource "azurerm_role_assignment" "contributor" {
   scope                = azurerm_resource_group.rg-monitor-automation.id
   role_definition_name = "Contributor"
+  principal_id         = azurerm_automation_account.aa-monitor-automation.identity[0].principal_id
+}
+
+resource "azurerm_role_assignment" "monitor-reader" {
+  scope                = data.azurerm_subscription.primary.id
+  role_definition_name = "Monitoring Reader"
   principal_id         = azurerm_automation_account.aa-monitor-automation.identity[0].principal_id
 }
 
