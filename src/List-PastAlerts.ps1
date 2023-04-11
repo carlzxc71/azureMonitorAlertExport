@@ -15,6 +15,7 @@ $AzureContext = (Connect-AzAccount -Identity).context
   
 # set and store context
 $AzureContext = Set-AzContext -SubscriptionName $AzureContext.Subscription -DefaultProfile $AzureContext 
+$accountKey = Get-AutomationVariable -Name "accountKey"
 
 ## List past alerts
 
@@ -33,7 +34,7 @@ $Alerts| Export-Csv -Path ".\alerts.csv" -NoTypeInformation
 # Create a storage context using the system-assigned managed identity
 $StorageAccountName = "stgazuremonitoralert001"
 $StorageAccountResourceGroup = "rg-monitor-automation-001"
-$context = New-AzStorageContext -StorageAccountName $StorageAccountName -StorageAccountKey "redacted"
+$context = New-AzStorageContext -StorageAccountName $StorageAccountName -StorageAccountKey $accountKey
 
 # Upload the CSV file to Storage Account
 $ShareName = "share01"
