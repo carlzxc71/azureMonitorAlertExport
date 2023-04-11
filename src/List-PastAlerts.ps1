@@ -1,8 +1,8 @@
 ## Import Modules
 
-Import-Module -Name Az 
 Import-Module -Name Az.Accounts 
 Import-Module -Name Az.AlertsManagement 
+Import-Module -Name Az.Storage
 
 ## Set correct subscription
 
@@ -29,16 +29,17 @@ Sort-Object StartDateTime
 # Export data to CSV
 $Alerts| Export-Csv -Path ".\alerts.csv" -NoTypeInformation
 
+
 # Create a storage context using the system-assigned managed identity
 $StorageAccountName = "stgazuremonitoralert001"
 $StorageAccountResourceGroup = "rg-monitor-automation-001"
-$StorageContext = New-AzStorageContext -StorageAccountName $StorageAccountName `
-                                       -ResourceGroupName $StorageAccountResourceGroup
-                                       -UseConnectedAccount `
+$context = New-AzStorageContext -StorageAccountName $StorageAccountName -StorageAccountKey "redacted"
 
 # Upload the CSV file to Storage Account
 $ShareName = "share01"
 $DirectoryName = "directory01"
 $FileName = "alerts.csv"
 $FilePath = ".\alerts.csv"
-Set-AzStorageFileContent -ShareName $ShareName -Context $StorageContext -Source $FilePath -Path "$DirectoryName/$FileName-$endTime" -Force
+Set-AzStorageFileContent -ShareName $ShareName -Context $context -Source $FilePath -Path "$DirectoryName/$FileName" -Force
+
+
