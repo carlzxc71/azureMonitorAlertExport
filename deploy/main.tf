@@ -93,6 +93,15 @@ resource "azurerm_automation_variable_string" "secret-variable" {
   description             = "Account key for access to Azure Storage Account"
 }
 
+resource "azurerm_automation_variable_string" "storageacc-variable" {
+  name                    = "storageAccountName"
+  resource_group_name     = azurerm_resource_group.rg-monitor-automation.name
+  automation_account_name = azurerm_automation_account.aa-monitor-automation.name
+  value                   = azurerm_storage_account.stg-monitor.name
+  encrypted               = false
+  description             = "The name of the Storage Account"
+}
+
 resource "azurerm_role_assignment" "contributor" {
   scope                = azurerm_resource_group.rg-monitor-automation.id
   role_definition_name = "Contributor"

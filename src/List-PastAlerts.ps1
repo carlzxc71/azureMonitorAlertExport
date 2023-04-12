@@ -32,7 +32,7 @@ $Alerts| Export-Csv -Path ".\alerts.csv" -NoTypeInformation
 
 
 # Create a storage context using the system-assigned managed identity
-$StorageAccountName = "stgazuremonitoralert001"
+$StorageAccountName = Get-AutomationVariable -Name "storageAccountName"
 $context = New-AzStorageContext -StorageAccountName $StorageAccountName -StorageAccountKey $accountKey
 
 # Upload the CSV file to Storage Account
