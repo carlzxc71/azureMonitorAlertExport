@@ -111,3 +111,7 @@ Now to test:
 - To verify successful output to the Storage Account browse to it in the Azure Portal, the name if left default is: **stgazuremonitoralert001**
 - In the left pane select **File Shares** and select **share01**
 - Select **directory01** to view your `alerts.csv` file
+
+## Note
+
+If you wish to change any values of variables when deploying this solution you can do so by updating the following file: `terraform.tfvars`
