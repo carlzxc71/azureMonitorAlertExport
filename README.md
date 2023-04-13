@@ -114,4 +114,4 @@ Now to test:
 
 ## Note
 
-If you wish to change any values of variables when deploying this solution you can do so by updating the following file: `terraform.tfvars`
+If you wish to change any values of variables when deploying this solution you can do so by updating the following file: `terraform.tfvars` inside the `deploy` folder. 
