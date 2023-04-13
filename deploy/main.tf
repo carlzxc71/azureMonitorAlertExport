@@ -1,36 +1,19 @@
-terraform {
-  required_providers {
-    azurerm = {
-      source  = "hashicorp/azurerm"
-      version = "~> 3.48.0"
-    }
-  }
-}
-
-provider "azurerm" {
-  features {}
-}
-
-locals {
-  tags = {
-    "deployedBy"  = "terraform"
-    "environment" = "Development"
-    "workload"    = "alertExport"
-  }
-}
+// Resource group configuration
 
 resource "azurerm_resource_group" "rg-monitor-automation" {
-  name     = "rg-monitor-automation-001"
-  location = "West Europe"
+  name     = var.rg_name
+  location = var.rg_location
 
   tags = local.tags
 }
 
+## Automation account configuration
+
 resource "azurerm_automation_account" "aa-monitor-automation" {
-  name                = "aa-monitorautomation-001"
+  name                = var.aa_account_name
   location            = azurerm_resource_group.rg-monitor-automation.location
   resource_group_name = azurerm_resource_group.rg-monitor-automation.name
-  sku_name            = "Basic"
+  sku_name            = var.aa_account_sku
 
   identity {
     type = "SystemAssigned" # Creates a system-assigned identity
@@ -46,7 +29,6 @@ data "local_file" "script" {
 data "azurerm_subscription" "primary" {
 }
 
-## Automation account configuration
 
 resource "azurerm_automation_runbook" "aa-runbook" {
   name                    = "Get-AzureMonitorAlerts"
@@ -70,8 +52,8 @@ resource "azurerm_automation_schedule" "schedule" {
   frequency               = "Month"
 
   monthly_occurrence {
-    day        = "Monday"
-    occurrence = 1
+    day        = var.runbook_schedule.day
+    occurrence = var.runbook_schedule.occurrence
   }
 
   description = "Occurs once a month"
@@ -117,7 +99,7 @@ resource "azurerm_role_assignment" "monitor-reader" {
 ## Storage account configuration
 
 resource "azurerm_storage_account" "stg-monitor" {
-  name                     = "stgazuremonitoralert001"
+  name                     = var.stg_name
   resource_group_name      = azurerm_resource_group.rg-monitor-automation.name
   location                 = azurerm_resource_group.rg-monitor-automation.location
   account_tier             = "Standard"
@@ -127,13 +109,13 @@ resource "azurerm_storage_account" "stg-monitor" {
 }
 
 resource "azurerm_storage_share" "stg-share" {
-  name                 = "share01"
+  name                 = var.stg_share_name
   storage_account_name = azurerm_storage_account.stg-monitor.name
-  quota                = 50
+  quota                = var.stg_share_quota
 }
 
 resource "azurerm_storage_share_directory" "stg-dir" {
-  name                 = "directory01"
+  name                 = var.stg_directory_name
   share_name           = azurerm_storage_share.stg-share.name
   storage_account_name = azurerm_storage_account.stg-monitor.name
 }
