@@ -3,7 +3,7 @@
 ## Note
 
 You can use the guide in this repo to install this solution. You can find a similar guide on my website with some more images here.\
-[Blogpost name](URL)
+[Automating Alert Extraction with Azure Automation, powershell & Terraform](https://www.lindbergtech.com/automate-the-export-of-azure-monitor-fired-alerts/)
 
 ## Pre-requisites
 You will need a few things to follow along:
