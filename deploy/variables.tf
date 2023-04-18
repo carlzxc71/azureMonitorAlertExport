@@ -59,4 +59,3 @@ variable "stg_directory_name" {
   type        = string
   default     = "directory01"
 }
-
