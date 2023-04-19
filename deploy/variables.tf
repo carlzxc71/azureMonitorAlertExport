@@ -8,9 +8,9 @@ variable "rg_name" {
 variable "rg_location" {
   description = "The location of the resource group"
   type        = string
+  default     = "West Europe"
 }
 
-// Automation account variables
 variable "aa_account_name" {
   description = "The name of the Automation Account"
   type        = string
@@ -35,7 +35,6 @@ variable "runbook_schedule" {
   }
 }
 
-// Storage account variables
 variable "stg_name" {
   description = "The name of the Storage Account"
   type        = string
