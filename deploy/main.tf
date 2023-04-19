@@ -25,7 +25,7 @@ resource "azurerm_automation_account" "this" {
 }
 
 
-resource "azurerm_automation_runbook" "script" {
+resource "azurerm_automation_runbook" "this" {
   name                    = "Get-AzureMonitorAlerts"
   location                = azurerm_resource_group.this.location
   resource_group_name     = azurerm_resource_group.this.name
@@ -40,7 +40,7 @@ resource "azurerm_automation_runbook" "script" {
   tags = local.tags
 }
 
-resource "azurerm_automation_schedule" "schedule" {
+resource "azurerm_automation_schedule" "this" {
   name                    = "powershell-automation-schedule"
   resource_group_name     = azurerm_resource_group.this.name
   automation_account_name = azurerm_automation_account.this.name
@@ -54,11 +54,11 @@ resource "azurerm_automation_schedule" "schedule" {
   description = "Occurs once a month"
 }
 
-resource "azurerm_automation_job_schedule" "jobschedule" {
-  schedule_name           = azurerm_automation_schedule.schedule.name
+resource "azurerm_automation_job_schedule" "this" {
+  schedule_name           = azurerm_automation_schedule.this.name
   resource_group_name     = azurerm_resource_group.this.name
   automation_account_name = azurerm_automation_account.this.name
-  runbook_name            = azurerm_automation_runbook.script.name
+  runbook_name            = azurerm_automation_runbook.this.name
 }
 
 resource "azurerm_automation_variable_string" "secret" {
@@ -102,14 +102,14 @@ resource "azurerm_storage_account" "this" {
   tags = local.tags
 }
 
-resource "azurerm_storage_share" "share" {
+resource "azurerm_storage_share" "this" {
   name                 = var.stg_share_name
   storage_account_name = azurerm_storage_account.this.name
   quota                = var.stg_share_quota
 }
 
-resource "azurerm_storage_share_directory" "directory" {
+resource "azurerm_storage_share_directory" "this" {
   name                 = var.stg_directory_name
-  share_name           = azurerm_storage_share.share.name
+  share_name           = azurerm_storage_share.this.name
   storage_account_name = azurerm_storage_account.this.name
 }
